@@ -27,7 +27,11 @@
   + BoundSql
     + 作用：存放格式化后符合jdbc语法的sql和sql中需要传入的参数数据
   + Executor
+    + 调用jdbc功能的接口，query，update
   + SimpleExecutor
+    + 执行器实现类
+    + 将映射文件中的sql语句格式化为jdbc能够操作的语句并封装到BoundSql里
+    + 通过jdbc的预处理语句平台实现接口中定义的方法
   + SqlSession
     + 功能：存放功能接口
     + 具体接口
@@ -40,8 +44,32 @@
       + getMapper
         + 动态代理接口
   + DefaultSqlSession
-    + sqlsession的实现类，
+    + sqlsession的实现类，实现sqlsession接口中定义的方法
+    + selectList
+      + 创建SimpleExecutor对象，调用query方法，返回结果集
+    + selectOne
+      + 直接调用selectList方法，如果数量为一返回，否则报错
+    + update
+      + 创建SimpleExecutor对象，调用update方法
+    + getMapper
+      + 使用jdk动态代理对象，根据传入参数判断需要执行的方法
+      + 如果返回类型是Integer，都是调用update方法
+      + 如果返回类型含有泛型，则是返回selectList
+      + 否则，返回selectOne
   + SqlSessionFactory
+    + 定义openSession方法用于返回sqlsession
   + DefaultSqlSessionFactory
+    + 实现opensession方法返回sqlsession对象
   + SqlSessionFactoryBuilder
+    + 解析输入流，通过xmlConfigBuilder返回configuration对象，并将该对象传入给DefaultSqlSessionFactory用于返回sqlsessionFactory
 + util（编写工具包类）
+  + GenericTokenParser
+    + 该方法主要实现了配置文件、脚本等片段中占位符的解析、处理工作，并返回最终需要的数据。
+    + 扫描#{}标记调用TokenHandler接口对标记中的变量做处理
+  + ParameterMapping
+    + 记录内容
+  + TokenHandler
+    + 定义处理方法接口
+  + ParameterMappingTokenHandler
+    + 实现TokenHandler接口
+    + 将#{}中的变量加入到ParameterMapping中，然后替换为?
