@@ -1,0 +1,47 @@
+### 自定义mybatis设计思路
+
++ config包（编写配置操作相关的类）
+  + XMLConfigBuilder
+    + 作用：加载配置文件，获取数据库配置信息和调用XMLMapperBuilder解析映射配置文件中的sql相关信息
+    + 流程：初始化Configuration对象，并使用dom4j解析存放数据库配置的xml文件，将相关配置封装到连接池中再转交给configuration，之后通过对xml中记录的mapper映射文件路径的扫描，分别加载字节流并通过XMLMapperBuilder将映射文件中的相关配置加载到configuration中
+  + XMLMapperBuilder
+    + 作用：解析映射文件
+    + 流程：使用dom4j方式将单个映射配置文件中的namespace以及带有select,update,delete,insert四种标签中包含的id，parameterType和resultType以及sql语句分别保存到configuration中的mappedStatementMap中，其中key为namespace.id，value为mappedStatement对象，由id,resultType,parameterType以及sql组成
++ io（编写文件流相关的类）
+  + Resources
+    + 作用：将配置文件加载为字节输入流
++ pojo（编写公共java类）
+  + Configuration
+    + 作用：存储数据源信息和格式化为key，value形式的的映射文件信息
+    + 字段：
+      + dataSource
+      + mappedStatementMap
+  + MappedStatement
+    + 作用：存放映射文件中单个标签中的信息
+    + 字段：
+      + id
+      + resultType
+      + parameterType
+      + Sql
++ sqlSession（编写sqlSession相关的类）
+  + BoundSql
+    + 作用：存放格式化后符合jdbc语法的sql和sql中需要传入的参数数据
+  + Executor
+  + SimpleExecutor
+  + SqlSession
+    + 功能：存放功能接口
+    + 具体接口
+      + selectList
+        + 查询多个对象
+      + selectOne
+        + 查询单个对象
+      + update
+        + 修改对象
+      + getMapper
+        + 动态代理接口
+  + DefaultSqlSession
+    + sqlsession的实现类，
+  + SqlSessionFactory
+  + DefaultSqlSessionFactory
+  + SqlSessionFactoryBuilder
++ util（编写工具包类）
