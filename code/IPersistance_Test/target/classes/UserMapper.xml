@@ -1,0 +1,31 @@
+<mapper namespace="com.Ivan.dao.UserDao">
+
+
+    <!--  user的唯一标识statement.id由namespace和id共同组成  -->
+    <!--  resultType封装结果集的类全路径  -->
+    <select id="findAll" resultType="com.Ivan.pojo.User">
+        select * from user
+    </select>
+
+    <!--  传入多个参数时我们应该由面向对象的思想，这边的parameterType表示传入参数的类全路径 -->
+    <!--  确定传入参数之后，我们怎么才能将对应字段的属性插入到相应的位置呢
+          select * from user where id = ? and username = ?
+          ？表示占位符，是在jdbc当中的，使用？我们无法判断当前需要的是哪一个属性值
+          我们改为#{param}，注意#是我们自定义的，我们需要通过{}中的值来判断需要的是哪一个值，所以填入值时应该保持与类中属性一致
+    -->
+    <select id="findByCondition" resultType="com.Ivan.pojo.User" parameterType="com.Ivan.pojo.User">
+        select * from user where id = #{id} and username = #{username}
+    </select>
+
+    <insert id="insert" parameterType="com.Ivan.pojo.User">
+        insert into user (id,username) values (#{id},#{username})
+    </insert>
+
+    <update id="update" parameterType="com.Ivan.pojo.User">
+        update user set username = #{username} where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.Ivan.pojo.User">
+        delete from user where id = #{id}
+    </delete>
+</mapper>
