@@ -1,1 +1,28 @@
-# javaAdvancedLearning
+### 接口说明
++ 对含有该人物的白名单注解进行测试
+  + http://localhost:8080/demo/query?username=tom&name=tom
++ 对没有含有该人物的白名单注解进行测试
+  + http://localhost:8080/demo/query?username=maven&name=sandy
++ 对类白名单和方法白名单都有的人物进行测试
+  + http://localhost:8080/security01/query01?username=tom&name=luna
++ 对类白名单有，方法白名单没有的人物进行测试
+  + http://localhost:8080/security01/query01?username=maven&name=akira
++ 对注解中括号参数为空双引号的进行测试
+  + http://localhost:8080/security02/query01?username=maven&name=ivan
++ 对无括号的注解进行测试
+  + http://localhost:8080/security02/query02?name=cat
+
+### 设计思路
++ handler类中加入白名单数组
++ 扫描类级注解时创建whiteList数组初始值为空
+  + 发现类级sercurity时，将value值赋值给whiteList
+  + 开始遍历方法注解前创建临时数组tempList并通过whiteList值进行初始化
+    + 如果遍历时没有碰到security注解，相当于将类级注解中的数组赋值到handler类的白名单数组中
+    + 如果遍历时扫描到security注解，则将该方法上的注解白名单赋值待对应方法的handler白名单中
++ 拦截到url请求时
+  + 根据uri获取到对应的handler，之后根据handler中的白名单情况进行拦截
+    + 如果白名单为null，放行所有请求
+    + 如果不为null
+      + 如果url中没有username参数或者username参数对应的值不在白名单中返回403错误
++ 对于特殊情况处理
+  + 没有赋值白名单的security都会认为白名单为空，拒绝所有请求
