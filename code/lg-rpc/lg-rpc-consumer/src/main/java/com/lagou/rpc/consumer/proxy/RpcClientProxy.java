@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.lagou.rpc.common.RpcRequest;
 import com.lagou.rpc.common.RpcResponse;
 import com.lagou.rpc.consumer.client.RpcClient;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -17,9 +18,10 @@ import java.util.UUID;
  * 3.发送消息
  * 4.返回结果
  */
+@Component
 public class RpcClientProxy {
 
-    public static Object createProxy(Class serviceClass,String ip,Integer port) {
+    public Object createProxy(Class serviceClass,String ip,Integer port) {
         return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
                 new Class[]{serviceClass}, new InvocationHandler() {
                     @Override

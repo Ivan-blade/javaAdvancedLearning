@@ -12,6 +12,7 @@
         <module>lg-rpc-consumer</module>
         <module>lg-rpc-provider</module>
         <module>lg-rpc-api</module>
+        <module/>
     </modules>
 
     <parent>
@@ -19,6 +20,14 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.4.RELEASE</version>
     </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.101tec</groupId>
+            <artifactId>zkclient</artifactId>
+            <version>0.2</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,33 +1,44 @@
 package com.lagou.rpc.consumer.factory;
 
 import com.lagou.rpc.api.IUserService;
+import com.lagou.rpc.consumer.common.NodesManager;
 import com.lagou.rpc.consumer.proxy.RpcClientProxy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author hylu.ivan
  * @date 2021/9/21 下午2:43
  * @description
  */
+@Component
 public class IUserFactory {
 
-    public static Deque<IUserService> deque = new LinkedList<>();
+    private Deque<IUserService> userDeque = new LinkedList<>();
 
-    static {
-        IUserService userService1 = (IUserService) RpcClientProxy.createProxy(IUserService.class,"127.0.0.1",8899);
-        IUserService userService2 = (IUserService) RpcClientProxy.createProxy(IUserService.class,"127.0.0.1",8898);
-        IUserService userService3 = (IUserService) RpcClientProxy.createProxy(IUserService.class,"127.0.0.1",8897);
-        IUserFactory.deque.add(userService1);
-        IUserFactory.deque.add(userService2);
-        IUserFactory.deque.add(userService3);
-        System.out.println("可用服务已装载到容器,数量为："+IUserFactory.deque.size());
+    @Autowired
+    private RpcClientProxy rpcClientProxy;
+
+    public IUserService getUserService() {
+        IUserService iUserService = userDeque.removeFirst();
+        userDeque.addLast(iUserService);
+        return iUserService;
     }
 
-    public static IUserService getUserService() {
-        IUserService iUserService = deque.removeFirst();
-        deque.addLast(iUserService);
-        return iUserService;
+    public void updateUserDeque() {
+        List<String> list = NodesManager.nodesList;
+        userDeque.clear();
+        for (String s : list) {
+            String[] split = s.split("\t");
+            String ip = split[0];
+            int port = Integer.parseInt(split[1]);
+            IUserService userService = (IUserService) rpcClientProxy.createProxy(IUserService.class,ip,port);
+            userDeque.add(userService);
+        }
+        System.out.println("可用服务已装载到容器,数量为："+ userDeque.size());
     }
 }
