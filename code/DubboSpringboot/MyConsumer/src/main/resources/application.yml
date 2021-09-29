@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: Myconsumer
+dubbo:
+  registry:
+    address: zookeeper://192.168.8.102:2181
+  application:
+    id: Myconsumer
+  scan:
+    base-packages: com.ivan.controller
